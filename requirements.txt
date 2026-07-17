@@ -1,0 +1,13 @@
+altgraph==0.17.5
+hid==1.0.9
+importlib_resources==7.1.0
+libusb-package==1.0.30.0
+packaging==26.2
+pefile==2024.8.26
+pillow==12.1.1
+pyinstaller==6.21.0
+pyinstaller-hooks-contrib==2026.6
+pystray==0.19.5
+pywin32-ctypes==0.2.3
+setuptools==82.0.1
+six==1.17.0
