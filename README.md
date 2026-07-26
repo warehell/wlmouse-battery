@@ -5,6 +5,7 @@ Tray icon for windows that displays battery percentage for wlmouse products (wor
 * WLmouse Beast X Mini 
 * WLmouse Beast X Mini Pro
 * WLmouse Strider
+* WLmouse Sword X
 * Pulsar X2H Mini
 
 ## Build
