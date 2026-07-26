@@ -35,12 +35,12 @@ class WLMouse:
                     mouse.close()
                     continue
 
-            except Exception as e:
+            except hid.HIDException as e:
                 print(f'Cannot open with path: {e}')
                 continue
 
         if self.mouse is None:
-            raise Exception('No usable Pulsar HID interface found.')
+            raise Exception('No usable Wlmouse HID interface found.')
 
     def get_battery(self):
         command_buffer = [0x00] * 65  # got this command buffer from https://gm.wlmouse.gg/#/project/items
@@ -95,12 +95,14 @@ class Pulsar:
                     self.mouse.nonblocking = 1
                     self.get_battery()
                     break
+                except TimeoutError:
+                    raise
                 except Exception as e:
                     print(e)
                     self.mouse = None
                     mouse.close()
                     continue
-            except Exception as e:
+            except hid.HIDException as e:
                 print(f'Cannot open with path: {e}')
                 continue
 
@@ -134,7 +136,12 @@ def find_mouse():
         connected_vids.add(device['vendor_id'])
     for vendor, vids in known_mouses.items():
         if vids in connected_vids:
-            return vendor(vids)
+            while True:
+                try:
+                    return vendor(vids)
+                except TimeoutError:
+                    time.sleep(10)
+    raise Exception('No supported device found.')
 
 
 def create_battery_icon(percent):
