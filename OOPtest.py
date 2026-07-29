@@ -177,7 +177,11 @@ def on_click(icon, item):
 
 
 def update_icon(icon, mouse):
-    current_battery_level = mouse.get_battery()
+    try:
+        current_battery_level = mouse.get_battery()
+    except hid.HIDException:
+        mouse = find_mouse()
+        current_battery_level = mouse.get_battery()
     print('Updating...')
     icon.icon = create_battery_icon(current_battery_level)
     icon.title = f'WLmouse Battery: {current_battery_level}%'
@@ -199,18 +203,22 @@ def main():
 
     icon = pystray.Icon('wlmouse_battery', image, f'WLmouse Battery: {current_battery_level}%', menu)
 
-    def updater(icon):
+    def updater(icon, mouse):
         while True:
             time.sleep(300)  # 5 минут
             # Обновляем иконку в главном потоке, так как работа с GUI потокобезопасна не всегда
             # Используем метод `update_menu`, чтобы вызвать код в главном потоке
             # или просто ставим новую иконку через `icon.icon = ...`
-            battery_level = mouse.get_battery()
+            try:
+                battery_level = mouse.get_battery()
+            except hid.HIDException:
+                mouse = find_mouse()
+                battery_level = mouse.get_battery()
             icon.icon = create_battery_icon(battery_level)
             icon.title = f'{mouse.name} Battery: {battery_level}%'
             print(f'battery updated: {battery_level}%')
 
-    thread = threading.Thread(target=updater, args=(icon,), daemon=True)
+    thread = threading.Thread(target=updater, args=(icon, mouse), daemon=True)
     thread.start()
 
     # Запускаем иконку (этот метод блокирует выполнение до выхода)
